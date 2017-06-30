@@ -4,8 +4,10 @@
 #include "QPainter"
 #include "QFile"
 #include "QDataStream"
+#include "QScrollBar"
 
 #include <vector>
+#include <algorithm>
 
 #include <stdint.h>
 #include <stddef.h>
@@ -18,10 +20,8 @@ public:
 
 	BitViewWidget(QWidget* parent);
 
-	size_t GetDataSize();
-	size_t GetScale();
-	size_t GetPeriod();
 	void ReadFile(QFile* file);
+	void CaptureScrollBars(QScrollBar* vertical, QScrollBar* horizontal);
 
 public slots:
 	void setHorizontalScrollBarValue(int value);
@@ -33,12 +33,27 @@ protected:
 	void paintEvent(QPaintEvent* event) override;
 
 private:
-	size_t hor_val_;
-	size_t ver_val_;
-	size_t period_bits_;
+
+	void SetScrollBars();
 
 	std::vector<uint8_t> data_;
 	size_t scale_;
+	size_t period_bits_;
+
+	QScrollBar* hor_scrollbar_ = nullptr;
+	QScrollBar* ver_scrollbar_ = nullptr;
+
+	// column and row offset are coordinates (x,y) of top left bit
+	size_t column_offset_;
+	size_t row_offset_;
+
+	// number of rows and columns that can be rendered with current width() and height()
+	size_t num_cols_on_widget_;
+	size_t num_rows_on_widget_;
+
+	// total number of rows and columns that can be rendered with this data
+	size_t num_rows_in_data_;
+	size_t num_cols_in_data_;
 };
 
 

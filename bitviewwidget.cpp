@@ -3,24 +3,12 @@
 BitViewWidget::BitViewWidget(QWidget* parent):
 												QWidget(parent),
 												scale_(10),
-												hor_val_(0),
-												ver_val_(0),
+												column_offset_(0),
+												row_offset_(0),
 												period_bits_(8)
 {
 }
 
-size_t BitViewWidget::GetDataSize()
-{
-	return data_.size();
-}
-size_t BitViewWidget::GetScale()
-{
-	return scale_;
-}
-size_t BitViewWidget::GetPeriod()
-{
-	return period_bits_;
-}
 
 void BitViewWidget::ReadFile(QFile* file)
 {
@@ -37,8 +25,14 @@ int GetBit(const uint8_t* mass, size_t bitpos)
 
 void BitViewWidget::paintEvent(QPaintEvent* event)
 {
-	size_t area_height = height();
-	size_t area_width = width();
+	num_cols_on_widget_ = width()/scale_;
+	num_rows_on_widget_ = height()/scale_;
+
+	num_rows_in_data_ = (data_.size() * CHAR_BIT + (period_bits_ - 1))/period_bits_ ;
+	num_cols_in_data_ = std::min(period_bits_ , data_.size()*CHAR_BIT);
+
+	SetScrollBars();
+
 	QPainter painter(this);
 
 	if(data_.empty())
@@ -47,20 +41,14 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 	}
 	else
 	{
-		size_t starting_row_id = ver_val_;
-		size_t starting_col_id = hor_val_;
-
-		size_t num_cols_available = area_width/scale_;
-		size_t num_rows_available = area_height/scale_;
-
-		size_t num_rows_total = (data_.size() * CHAR_BIT + (period_bits_ - 1))/period_bits_ ;
-		size_t num_cols_total = (period_bits_ < data_.size()*CHAR_BIT) ? period_bits_ : data_.size()*CHAR_BIT;
-
-		size_t num_rows = (num_rows_available < num_rows_total) ? num_rows_available : num_rows_total;
-		size_t num_cols = (num_cols_available < num_cols_total) ? num_cols_available : num_cols_total;
-
+		size_t num_rows = std::min(num_rows_on_widget_ , num_rows_in_data_);
+		size_t num_cols = std::min(num_cols_on_widget_ , num_cols_in_data_);
 
 		painter.scale(scale_,scale_);
+
+		/*
+		 * TODO: handle the last row, it can be partial
+		 */
 
 		painter.fillRect(0,0,num_cols,num_rows,Qt::black);
 
@@ -68,7 +56,7 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 		{
 			for (size_t j = 0; j < num_cols; ++j)
 			{
-				if ( GetBit( (const uint8_t*)data_.data(),starting_col_id + j + period_bits_*(starting_row_id + i)) == 1)
+				if ( GetBit( (const uint8_t*)data_.data(),column_offset_ + j + period_bits_*(row_offset_ + i)) == 1)
 				{
 					painter.fillRect(j,i,1,1,Qt::green);
 				}
@@ -80,25 +68,67 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 
 void BitViewWidget::setHorizontalScrollBarValue(int value)
 {
-	hor_val_ = value;
+	column_offset_ = value;
 	update();
 }
 void BitViewWidget::setVerticalScrollBarValue(int value)
 {
-	ver_val_ = value;
+	row_offset_ = value;
 	update();
 }
 void BitViewWidget::setPeriod(int value)
 {
-	ver_val_ = 0;
-	hor_val_ = 0;
+	row_offset_ = 0;
+	column_offset_ = 0;
 	period_bits_ = value;
 	update();
 }
 void BitViewWidget::setScale(int value)
 {
-	ver_val_ = 0;
-	hor_val_ = 0;
+	row_offset_ = 0;
+	column_offset_ = 0;
 	scale_ = value;
 	update();
+}
+
+void BitViewWidget::CaptureScrollBars(QScrollBar* vertical, QScrollBar* horizontal)
+{
+	if ( vertical != nullptr && horizontal != nullptr)
+	{
+		ver_scrollbar_ = vertical;
+		hor_scrollbar_ = horizontal;
+	}
+}
+
+void BitViewWidget::SetScrollBars()
+{
+	if (hor_scrollbar_ == nullptr || ver_scrollbar_ == nullptr)
+	{
+		return;
+	}
+	if (num_cols_on_widget_ < num_cols_in_data_)
+	{
+		hor_scrollbar_->setSingleStep(1);
+		hor_scrollbar_->setMinimum(0);
+		hor_scrollbar_->setMaximum(num_cols_in_data_ - num_cols_on_widget_);
+		hor_scrollbar_->setEnabled(true);
+	}
+	else
+	{
+		hor_scrollbar_->setValue(0);
+		hor_scrollbar_->setDisabled(true);
+	}
+
+	if (num_rows_on_widget_< num_rows_in_data_)
+	{
+		ver_scrollbar_->setSingleStep(1);
+		ver_scrollbar_->setMinimum(0);
+		ver_scrollbar_->setMaximum(num_rows_in_data_ - num_rows_on_widget_);
+		ver_scrollbar_->setEnabled(true);
+	}
+	else
+	{
+		ver_scrollbar_->setValue(0);
+		ver_scrollbar_->setDisabled(true);
+	}
 }
