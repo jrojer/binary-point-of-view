@@ -149,6 +149,16 @@ void BitViewWidget::SetScrollBars()
 	}
 }
 
+void BitViewWidget::wheelEvent(QWheelEvent* event)
+{
+	int num_steps = event->angleDelta().y() / 120;
+
+	int val = num_steps*height()/(int)grain_size_pixels_/10;
+	ver_scrollbar_->setValue( ver_scrollbar_->value() - val );
+
+	event->accept();
+}
+
 void BitViewWidget::ScrollBarValueChangedSlot(int dummy)
 {
 	update();
