@@ -85,10 +85,13 @@ void BitViewWidget::setPeriod(int value)
 }
 void BitViewWidget::SetGrainSize(int value)
 {
-	row_offset_ = 0;
-	column_offset_ = 0;
-	grain_size_pixels_ = value;
-	update();
+	if (value != 0)
+	{
+		row_offset_ = 0;
+		column_offset_ = 0;
+		grain_size_pixels_ = value;
+		update();
+	}
 }
 
 void BitViewWidget::CaptureScrollBars(QScrollBar* vertical, QScrollBar* horizontal)

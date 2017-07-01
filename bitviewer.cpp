@@ -1,6 +1,6 @@
 #include "bitviewer.h"
 
-BitViewer::BitViewer(): QMainWindow(), scale_(10)
+BitViewer::BitViewer(): QMainWindow(), scale_(1)
 {
 	ui.setupUi(this);
 
@@ -35,11 +35,10 @@ void BitViewer::on_pushButton_plus_clicked()
 {
 	// TODO scale must respect current top left coordinates
 
-	// TODO multiply
-	if (scale_ + 1 <= 32)
+	if (scale_ * 1.25 <= 4)
 	{
-		++scale_;
-		ui.bitview_widget->SetGrainSize(scale_);
+		scale_ *= 1.25;
+		ui.bitview_widget->SetGrainSize((int)(scale_ * 10));
 		ui.label_zoom_value->setText(QString::number(scale_));
 	}
 
@@ -48,11 +47,10 @@ void BitViewer::on_pushButton_minus_clicked()
 {
 	// TODO scale must respect current top left coordinates
 
-	// TODO multiply
-	if (scale_ - 1 >= 1)
+	if (scale_ * 0.8 >= 0.1)
 	{
-		--scale_;
-		ui.bitview_widget->SetGrainSize(scale_);
+		scale_ *= 0.8;
+		ui.bitview_widget->SetGrainSize((int)(scale_*10));
 		ui.label_zoom_value->setText(QString::number(scale_));
 	}
 }

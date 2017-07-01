@@ -20,7 +20,7 @@ private slots:
 	void on_pushButton_minus_clicked();
 
 private:
-	size_t scale_;
+	double scale_;
 	Ui::BitViewerMainWindow ui;
 };
 
