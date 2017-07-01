@@ -8,7 +8,6 @@ int main(int argc,char ** argv)
 
 	BitViewer w;
 	w.show();
-	//QString filename =  QFileDialog::getOpenFileName();
 
 	return app.exec();
 }

@@ -39,7 +39,7 @@ void BitViewer::on_pushButton_plus_clicked()
 	if (scale_ + 1 <= 32)
 	{
 		++scale_;
-		ui.bitview_widget->setScale(scale_);
+		ui.bitview_widget->SetGrainSize(scale_);
 		ui.label_zoom_value->setText(QString::number(scale_));
 	}
 
@@ -52,7 +52,7 @@ void BitViewer::on_pushButton_minus_clicked()
 	if (scale_ - 1 >= 1)
 	{
 		--scale_;
-		ui.bitview_widget->setScale(scale_);
+		ui.bitview_widget->SetGrainSize(scale_);
 		ui.label_zoom_value->setText(QString::number(scale_));
 	}
 }

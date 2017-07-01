@@ -2,7 +2,7 @@
 
 BitViewWidget::BitViewWidget(QWidget* parent):
 												QWidget(parent),
-												scale_(10),
+												grain_size_pixels_(10),
 												column_offset_(0),
 												row_offset_(0),
 												period_bits_(8)
@@ -25,8 +25,8 @@ int GetBit(const uint8_t* mass, size_t bitpos)
 
 void BitViewWidget::paintEvent(QPaintEvent* event)
 {
-	num_cols_on_widget_ = width()/scale_;
-	num_rows_on_widget_ = height()/scale_;
+	num_cols_on_widget_ = width()/grain_size_pixels_;
+	num_rows_on_widget_ = height()/grain_size_pixels_;
 
 	num_rows_in_data_ = (data_.size() * CHAR_BIT + (period_bits_ - 1))/period_bits_ ;
 	num_cols_in_data_ = std::min(period_bits_ , data_.size()*CHAR_BIT);
@@ -44,7 +44,7 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 		size_t num_rows = std::min(num_rows_on_widget_ , num_rows_in_data_);
 		size_t num_cols = std::min(num_cols_on_widget_ , num_cols_in_data_);
 
-		painter.scale(scale_,scale_);
+		painter.scale(grain_size_pixels_,grain_size_pixels_);
 
 		/*
 		 * TODO: handle the last row, it can be partial
@@ -83,11 +83,11 @@ void BitViewWidget::setPeriod(int value)
 	period_bits_ = value;
 	update();
 }
-void BitViewWidget::setScale(int value)
+void BitViewWidget::SetGrainSize(int value)
 {
 	row_offset_ = 0;
 	column_offset_ = 0;
-	scale_ = value;
+	grain_size_pixels_ = value;
 	update();
 }
 
