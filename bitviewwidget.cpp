@@ -3,8 +3,6 @@
 BitViewWidget::BitViewWidget(QWidget* parent):
 												QWidget(parent),
 												grain_size_pixels_(10),
-												column_offset_(0),
-												row_offset_(0),
 												period_bits_(8)
 {
 }
@@ -33,8 +31,9 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 
 	SetScrollBars();
 
-	column_offset_ = hor_scrollbar_->value();
-	row_offset_ = ver_scrollbar_->value();
+	// column and row offset are coordinates (x,y) of top left bit
+	size_t column_offset = hor_scrollbar_->value();
+	size_t row_offset = ver_scrollbar_->value();
 
 	QPainter painter(this);
 
@@ -55,7 +54,7 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 		{
 			for (size_t j = 0; j < num_cols; ++j)
 			{
-				if ( GetBit( (const uint8_t*)data_.data(),column_offset_ + j + period_bits_*(row_offset_ + i)) == 1)
+				if ( GetBit( (const uint8_t*)data_.data(),column_offset + j + period_bits_*(row_offset + i)) == 1)
 				{
 					painter.fillRect(j,i,1,1,Qt::green);
 				}
@@ -66,7 +65,7 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 		size_t i = num_rows-1;
 		for (size_t j = 0; j < num_cols; ++j)
 		{
-			size_t bitpos = column_offset_ + j + period_bits_*(row_offset_ + i);
+			size_t bitpos = column_offset + j + period_bits_*(row_offset + i);
 			if (bitpos >= data_.size()*CHAR_BIT)
 			{
 				return;
@@ -86,20 +85,8 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 
 }
 
-void BitViewWidget::setHorizontalScrollBarValue(int value)
-{
-	//column_offset_ = value;
-	update();
-}
-void BitViewWidget::setVerticalScrollBarValue(int value)
-{
-	//row_offset_ = value;
-	update();
-}
 void BitViewWidget::setPeriod(int value)
 {
-	//row_offset_ = 0;
-	//column_offset_ = 0;
 	hor_scrollbar_->setValue(0);
 	ver_scrollbar_->setValue(0);
 	period_bits_ = value;
@@ -109,8 +96,6 @@ void BitViewWidget::SetGrainSize(int value)
 {
 	if (value != 0)
 	{
-		row_offset_ = 0;
-		column_offset_ = 0;
 		grain_size_pixels_ = value;
 		update();
 	}
@@ -123,6 +108,8 @@ void BitViewWidget::CaptureScrollBars(QScrollBar* vertical, QScrollBar* horizont
 		ver_scrollbar_ = vertical;
 		hor_scrollbar_ = horizontal;
 	}
+	QObject::connect(vertical, SIGNAL(valueChanged(int)), this, SLOT(ScrollBarValueChangedSlot(int)));
+	QObject::connect(horizontal, SIGNAL(valueChanged(int)), this, SLOT(ScrollBarValueChangedSlot(int)));
 }
 
 void BitViewWidget::SetScrollBars()
@@ -160,4 +147,9 @@ void BitViewWidget::SetScrollBars()
 		ver_scrollbar_->setMaximum(0);
 		ver_scrollbar_->setDisabled(true);
 	}
+}
+
+void BitViewWidget::ScrollBarValueChangedSlot(int dummy)
+{
+	update();
 }

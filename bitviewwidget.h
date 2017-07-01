@@ -51,10 +51,9 @@ public:
 	void CaptureScrollBars(QScrollBar* vertical, QScrollBar* horizontal);
 
 public slots:
-	void setHorizontalScrollBarValue(int value);
-	void setVerticalScrollBarValue(int value);
 	void setPeriod(int value);
 	void SetGrainSize(int value);
+	void ScrollBarValueChangedSlot(int dummy);
 
 protected:
 	void paintEvent(QPaintEvent* event) override;
@@ -69,10 +68,6 @@ private:
 
 	QScrollBar* hor_scrollbar_ = nullptr;
 	QScrollBar* ver_scrollbar_ = nullptr;
-
-	// column and row offset are coordinates (x,y) of top left bit
-	size_t column_offset_;
-	size_t row_offset_;
 
 	// number of rows and columns that can be rendered with current width() and height()
 	size_t num_cols_on_widget_;

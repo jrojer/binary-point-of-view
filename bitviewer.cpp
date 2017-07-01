@@ -4,12 +4,11 @@ BitViewer::BitViewer(): QMainWindow(), scale_(1)
 {
 	ui.setupUi(this);
 
-	QObject::connect(ui.verticalScrollBar, SIGNAL(valueChanged(int)), ui.bitview_widget, SLOT(setVerticalScrollBarValue(int)));
-	QObject::connect(ui.horizontalScrollBar, SIGNAL(valueChanged(int)), ui.bitview_widget, SLOT(setHorizontalScrollBarValue(int)));
 	QObject::connect(ui.spinBox_period, SIGNAL(valueChanged(int)), ui.bitview_widget, SLOT(setPeriod(int)));
 
 	ui.bitview_widget->CaptureScrollBars(ui.verticalScrollBar, ui.horizontalScrollBar);
 }
+
 void BitViewer::on_pushButton_open_file_clicked()
 {
 	QString filename =  QFileDialog::getOpenFileName(this);
@@ -33,8 +32,6 @@ void BitViewer::on_pushButton_open_file_clicked()
 
 void BitViewer::on_pushButton_plus_clicked()
 {
-	// TODO scale must respect current top left coordinates
-
 	if (scale_ * 1.25 <= 4)
 	{
 		scale_ *= 1.25;
@@ -45,8 +42,6 @@ void BitViewer::on_pushButton_plus_clicked()
 }
 void BitViewer::on_pushButton_minus_clicked()
 {
-	// TODO scale must respect current top left coordinates
-
 	if (scale_ * 0.8 >= 0.1)
 	{
 		scale_ *= 0.8;
