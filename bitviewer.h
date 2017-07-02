@@ -7,6 +7,7 @@
 #include "QFile"
 #include "QPixmap"
 #include "QPainter"
+#include "QMimeData"
 
 class BitViewer : public QMainWindow
 {
@@ -19,7 +20,12 @@ private slots:
 	void on_pushButton_plus_clicked();
 	void on_pushButton_minus_clicked();
 
+protected:
+	void dropEvent(QDropEvent* event) override;
+	void dragEnterEvent(QDragEnterEvent *event) override;
+
 private:
+	void ProcessFile(const QString& filename);
 	double scale_;
 	Ui::BitViewerMainWindow ui;
 };
