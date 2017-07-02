@@ -32,8 +32,13 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 	SetScrollBars();
 
 	// column and row offset are coordinates (x,y) of top left bit
-	size_t column_offset = hor_scrollbar_->value();
-	size_t row_offset = ver_scrollbar_->value();
+	size_t column_offset = 0;
+	size_t row_offset = 0;
+	if ( hor_scrollbar_ != nullptr && ver_scrollbar_ != nullptr)
+	{
+		column_offset 	= hor_scrollbar_->value();
+		row_offset 		= ver_scrollbar_->value();
+	}
 
 	QPainter painter(this);
 
@@ -87,8 +92,11 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 
 void BitViewWidget::setPeriod(int value)
 {
-	hor_scrollbar_->setValue(0);
-	ver_scrollbar_->setValue(0);
+	if ( hor_scrollbar_ != nullptr && ver_scrollbar_ != nullptr)
+	{
+		hor_scrollbar_->setValue(0);
+		ver_scrollbar_->setValue(0);
+	}
 	period_bits_ = value;
 	update();
 }
