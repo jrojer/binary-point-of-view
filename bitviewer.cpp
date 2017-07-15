@@ -1,5 +1,7 @@
 #include "bitviewer.h"
 
+#define MAX_FILE_SIZE 700 * 1024 * 1024
+
 BitViewer::BitViewer(): QMainWindow()
 {
 	ui.setupUi(this);
@@ -32,6 +34,11 @@ void BitViewer::ProcessFile(const QString& filename)
 
 	if ( file.open(QIODevice::ReadOnly))
 	{
+		if ( file.size() > MAX_FILE_SIZE)
+		{
+			this->setWindowTitle("Bit Viewer - File is too big!");
+			return;
+		}
 		ui.bitview_widget->ReadFile(&file);
 
 		file.close();
