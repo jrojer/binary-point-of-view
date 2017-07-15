@@ -10,6 +10,7 @@ BitViewer::BitViewer(): QMainWindow()
 	QObject::connect(ui.pushButton_minus, SIGNAL(clicked()), ui.bitview_widget, SLOT(ZoomOut()));
 	QObject::connect(ui.pushButton_plus, SIGNAL(clicked()), ui.bitview_widget, SLOT(ZoomIn()));
 	QObject::connect(ui.bitview_widget, SIGNAL(ZoomChanged(double)), this, SLOT(ZoomChanged(double)));
+	QObject::connect(ui.bitview_widget, SIGNAL(CursorPositionChanged(size_t, size_t)), this, SLOT(CursorPositionChanged(size_t, size_t)));
 
 	ui.bitview_widget->CaptureScrollBars(ui.verticalScrollBar, ui.horizontalScrollBar);
 
@@ -86,4 +87,10 @@ void BitViewer::keyReleaseEvent(QKeyEvent* event)
 	{
 		QWidget::keyPressEvent(event);
 	}
+}
+
+void BitViewer::CursorPositionChanged(size_t x, size_t y)
+{
+	ui.label_pos_x->setText(QString::number(x));
+	ui.label_pos_y->setText(QString::number(y));
 }

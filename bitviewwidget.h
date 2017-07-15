@@ -64,10 +64,12 @@ private slots:
 
 signals:
 	void ZoomChanged(double val);
+	void CursorPositionChanged(size_t x, size_t y);
 
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void wheelEvent(QWheelEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
 
 private:
 
@@ -87,6 +89,12 @@ private:
 	// total number of rows and columns that can be rendered with this data
 	size_t num_rows_in_data_;
 	size_t num_cols_in_data_;
+
+	size_t current_column_under_cursor_in_widget_;
+	size_t current_row_under_cursor_in_widget_;
+
+	size_t current_column_under_cursor_in_data_;
+	size_t current_row_under_cursor_in_data_;
 
 	double scale_factor_;
 

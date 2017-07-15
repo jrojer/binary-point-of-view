@@ -8,6 +8,7 @@ BitViewWidget::BitViewWidget(QWidget* parent):
 												control_key_pressed_(false),
 												period_bits_(8)
 {
+	setMouseTracking(true);
 }
 
 
@@ -248,4 +249,16 @@ void BitViewWidget::ZoomOut()
 void BitViewWidget::SetControlKeyPressed(bool val)
 {
 	control_key_pressed_ = val;
+}
+
+void BitViewWidget::mouseMoveEvent(QMouseEvent* event)
+{
+	current_column_under_cursor_in_widget_ = event->pos().x()/grain_size_pixels_;
+	current_row_under_cursor_in_widget_ = event->pos().y()/grain_size_pixels_;
+
+	current_column_under_cursor_in_data_ 	= current_column_under_cursor_in_widget_ 	+ hor_scrollbar_->value();
+	current_row_under_cursor_in_data_ 		= current_row_under_cursor_in_widget_ 		+ ver_scrollbar_->value();
+
+	emit CursorPositionChanged(current_column_under_cursor_in_data_, current_row_under_cursor_in_data_);
+
 }
