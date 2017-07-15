@@ -64,12 +64,14 @@ private slots:
 
 signals:
 	void ZoomChanged(double val);
-	void CursorPositionChanged(size_t x, size_t y);
+	void CursorPositionChanged(int x, int y);
 
 protected:
 	void paintEvent(QPaintEvent* event) override;
 	void wheelEvent(QWheelEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
+	void mousePressEvent(QMouseEvent* event) override;
+	void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
 
@@ -90,15 +92,16 @@ private:
 	size_t num_rows_in_data_;
 	size_t num_cols_in_data_;
 
-	size_t current_column_under_cursor_in_widget_;
-	size_t current_row_under_cursor_in_widget_;
+	int current_column_under_cursor_in_widget_;
+	int current_row_under_cursor_in_widget_;
 
-	size_t current_column_under_cursor_in_data_;
-	size_t current_row_under_cursor_in_data_;
+	int current_column_under_cursor_in_data_;
+	int current_row_under_cursor_in_data_;
 
 	double scale_factor_;
 
 	bool control_key_pressed_;
+	bool mouse_pressed_;
 
 	const int default_grain_size_;
 };

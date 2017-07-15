@@ -6,6 +6,7 @@ BitViewWidget::BitViewWidget(QWidget* parent):
 												grain_size_pixels_(10),
 												scale_factor_(1),
 												control_key_pressed_(false),
+												mouse_pressed_(false),
 												period_bits_(8)
 {
 	setMouseTracking(true);
@@ -23,6 +24,13 @@ void BitViewWidget::ReadFile(QFile* file)
 int GetBit(const uint8_t* mass, size_t bitpos)
 {
 	return (mass[bitpos/CHAR_BIT] >> (bitpos%CHAR_BIT)) & 1;
+}
+
+void SetBit( uint8_t* mass, size_t bitpos, uint8_t bit)
+{
+	uint8_t mask = ~(1<<(bitpos%CHAR_BIT));
+	mass[bitpos/CHAR_BIT] &= mask;
+	mass[bitpos/CHAR_BIT] ^= (bit << (bitpos%CHAR_BIT));
 }
 
 void BitViewWidget::paintEvent(QPaintEvent* event)
@@ -253,12 +261,39 @@ void BitViewWidget::SetControlKeyPressed(bool val)
 
 void BitViewWidget::mouseMoveEvent(QMouseEvent* event)
 {
+	// probably useless
 	current_column_under_cursor_in_widget_ = event->pos().x()/grain_size_pixels_;
+	// probably useless
 	current_row_under_cursor_in_widget_ = event->pos().y()/grain_size_pixels_;
 
 	current_column_under_cursor_in_data_ 	= current_column_under_cursor_in_widget_ 	+ hor_scrollbar_->value();
 	current_row_under_cursor_in_data_ 		= current_row_under_cursor_in_widget_ 		+ ver_scrollbar_->value();
 
+	if ( current_column_under_cursor_in_data_ 	>= num_cols_in_data_ ||
+		 current_row_under_cursor_in_data_ 		>= num_rows_in_data_	)
+	{
+		current_column_under_cursor_in_data_ = -1;
+		current_row_under_cursor_in_data_ = -1;
+	}
+	else
+	{
+		if (mouse_pressed_)
+		{
+			SetBit(data_.data(), current_column_under_cursor_in_data_ + current_row_under_cursor_in_data_ * period_bits_, 1);
+			update();
+		}
+	}
+
 	emit CursorPositionChanged(current_column_under_cursor_in_data_, current_row_under_cursor_in_data_);
 
+}
+
+void BitViewWidget::mousePressEvent(QMouseEvent* event)
+{
+	mouse_pressed_ = true;
+}
+
+void BitViewWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+	mouse_pressed_ = false;
 }

@@ -10,12 +10,18 @@ BitViewer::BitViewer(): QMainWindow()
 	QObject::connect(ui.pushButton_minus, SIGNAL(clicked()), ui.bitview_widget, SLOT(ZoomOut()));
 	QObject::connect(ui.pushButton_plus, SIGNAL(clicked()), ui.bitview_widget, SLOT(ZoomIn()));
 	QObject::connect(ui.bitview_widget, SIGNAL(ZoomChanged(double)), this, SLOT(ZoomChanged(double)));
-	QObject::connect(ui.bitview_widget, SIGNAL(CursorPositionChanged(size_t, size_t)), this, SLOT(CursorPositionChanged(size_t, size_t)));
+	QObject::connect(ui.bitview_widget, SIGNAL(CursorPositionChanged(int, int)), this, SLOT(CursorPositionChanged(int, int)));
 
 	ui.bitview_widget->CaptureScrollBars(ui.verticalScrollBar, ui.horizontalScrollBar);
 
 	setAcceptDrops(true);
 	setFocusPolicy(Qt::StrongFocus);
+
+	// hide
+	ui.label_pos_x->	setHidden(true);
+	ui.label_pos_colon->setHidden(true);
+	ui.label_pos_y->	setHidden(true);
+	ui.label_position->	setHidden(true);
 }
 
 void BitViewer::on_pushButton_open_file_clicked()
@@ -89,8 +95,14 @@ void BitViewer::keyReleaseEvent(QKeyEvent* event)
 	}
 }
 
-void BitViewer::CursorPositionChanged(size_t x, size_t y)
+void BitViewer::CursorPositionChanged(int x, int y)
 {
+	bool hidden = (x==-1 || y == -1);
+	ui.label_position->	setHidden(hidden);
+	ui.label_pos_x->	setHidden(hidden);
+	ui.label_pos_colon->setHidden(hidden);
+	ui.label_pos_y->	setHidden(hidden);
+
 	ui.label_pos_x->setText(QString::number(x));
 	ui.label_pos_y->setText(QString::number(y));
 }

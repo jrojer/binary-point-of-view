@@ -17,7 +17,7 @@ public:
 
 public slots:
 	void ZoomChanged(double);
-	void CursorPositionChanged(size_t x, size_t y);
+	void CursorPositionChanged(int x, int y);
 
 private slots:
 	void on_pushButton_open_file_clicked();
