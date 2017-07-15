@@ -12,6 +12,7 @@ BitViewer::BitViewer(): QMainWindow()
 	ui.bitview_widget->CaptureScrollBars(ui.verticalScrollBar, ui.horizontalScrollBar);
 
 	setAcceptDrops(true);
+	setFocusPolicy(Qt::StrongFocus);
 }
 
 void BitViewer::on_pushButton_open_file_clicked()
@@ -55,4 +56,27 @@ void BitViewer::dragEnterEvent(QDragEnterEvent *event)
 void BitViewer::ZoomChanged(double val)
 {
 	ui.label_zoom_value->setText(QString::number(val));
+}
+
+void BitViewer::keyPressEvent(QKeyEvent* event)
+{
+	if (event->key() == Qt::Key_Control)
+	{
+		ui.bitview_widget->SetControlKeyPressed(true);
+	}
+	else
+	{
+		QWidget::keyPressEvent(event);
+	}
+}
+void BitViewer::keyReleaseEvent(QKeyEvent* event)
+{
+	if (event->key() == Qt::Key_Control)
+	{
+		ui.bitview_widget->SetControlKeyPressed(false);
+	}
+	else
+	{
+		QWidget::keyPressEvent(event);
+	}
 }

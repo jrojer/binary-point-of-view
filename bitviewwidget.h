@@ -57,6 +57,7 @@ public slots:
 	void setPeriod(int value);
 	void ZoomIn();
 	void ZoomOut();
+	void SetControlKeyPressed(bool val);
 
 private slots:
 	void ScrollBarValueChangedSlot(int dummy); // just to call update()
@@ -88,6 +89,8 @@ private:
 	size_t num_cols_in_data_;
 
 	double scale_factor_;
+
+	bool control_key_pressed_;
 
 	const int default_grain_size_;
 };

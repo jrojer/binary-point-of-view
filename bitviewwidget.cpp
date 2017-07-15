@@ -5,6 +5,7 @@ BitViewWidget::BitViewWidget(QWidget* parent):
 												default_grain_size_(10),
 												grain_size_pixels_(10),
 												scale_factor_(1),
+												control_key_pressed_(false),
 												period_bits_(8)
 {
 }
@@ -187,8 +188,22 @@ void BitViewWidget::wheelEvent(QWheelEvent* event)
 {
 	int num_steps = event->angleDelta().y() / 120;
 
-	int val = num_steps*height()/(int)grain_size_pixels_/10;
-	ver_scrollbar_->setValue( ver_scrollbar_->value() - val );
+	if (control_key_pressed_)
+	{
+		for ( int i = 0; i < num_steps; ++i)
+		{
+			ZoomIn();
+		}
+		for ( int i = 0; i > num_steps; --i)
+		{
+			ZoomOut();
+		}
+	}
+	else
+	{
+		int val = num_steps*height()/(int)grain_size_pixels_/10;
+		ver_scrollbar_->setValue( ver_scrollbar_->value() - val );
+	}
 
 	event->accept();
 }
@@ -227,4 +242,10 @@ void BitViewWidget::ZoomOut()
 		}
 	}
 	emit ZoomChanged(scale_factor_);
+}
+
+
+void BitViewWidget::SetControlKeyPressed(bool val)
+{
+	control_key_pressed_ = val;
 }

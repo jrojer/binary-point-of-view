@@ -24,6 +24,8 @@ private slots:
 protected:
 	void dropEvent(QDropEvent* event) override;
 	void dragEnterEvent(QDragEnterEvent *event) override;
+	void keyPressEvent(QKeyEvent* event) override;
+	void keyReleaseEvent(QKeyEvent* event) override;
 
 private:
 	void ProcessFile(const QString& filename);
