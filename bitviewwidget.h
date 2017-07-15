@@ -6,6 +6,8 @@
 #include "QDataStream"
 #include "QScrollBar"
 #include "QWheelEvent"
+#include "QPen"
+
 
 #include <vector>
 #include <algorithm>
@@ -80,6 +82,8 @@ private:
 	// total number of rows and columns that can be rendered with this data
 	size_t num_rows_in_data_;
 	size_t num_cols_in_data_;
+
+	const int default_grain_size;
 };
 
 

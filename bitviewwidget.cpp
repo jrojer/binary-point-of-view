@@ -2,6 +2,7 @@
 
 BitViewWidget::BitViewWidget(QWidget* parent):
 												QWidget(parent),
+												default_grain_size(10),
 												grain_size_pixels_(10),
 												period_bits_(8)
 {
@@ -48,13 +49,23 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 	}
 	else
 	{
+		// number of rows and columns to draw on the currently available space
 		size_t num_rows = std::min(num_rows_on_widget_ , num_rows_in_data_);
 		size_t num_cols = std::min(num_cols_on_widget_ , num_cols_in_data_);
 
+		// Pen to draw grid
+		QPen pen;
+		pen.setWidth(0);
+		pen.setColor(Qt::darkGray);
+		painter.setPen(pen);
+
+		// scale
 		painter.scale(grain_size_pixels_,grain_size_pixels_);
 
+		// fill background rectangle except the last row
 		painter.fillRect(0,0,num_cols,num_rows-1,Qt::black);
 
+		// draw green squares
 		for (size_t i = 0; i < num_rows-1; ++i) // all rows except the last one
 		{
 			for (size_t j = 0; j < num_cols; ++j)
@@ -62,6 +73,18 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 				if ( GetBit( (const uint8_t*)data_.data(),column_offset + j + period_bits_*(row_offset + i)) == 1)
 				{
 					painter.fillRect(j,i,1,1,Qt::green);
+				}
+			}
+		}
+
+		// draw grid except for the last row
+		if ( grain_size_pixels_ >= default_grain_size )
+		{
+			for (size_t i = 0; i < num_rows-1; ++i) // all rows except the last one
+			{
+				for (size_t j = 0; j < num_cols; ++j)
+				{
+					painter.drawRect(j,i,1,1);
 				}
 			}
 		}
@@ -79,11 +102,21 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 			{
 				// one
 				painter.fillRect(j,i,1,1,Qt::green);
+				// grid
+				if ( grain_size_pixels_ >= default_grain_size )
+				{
+					painter.drawRect(j,i,1,1);
+				}
 			}
 			else
 			{
 				// zero
 				painter.fillRect(j,i,1,1,Qt::black);
+				// grid
+				if ( grain_size_pixels_ >= default_grain_size )
+				{
+					painter.drawRect(j,i,1,1);
+				}
 			}
 		}
 	}
