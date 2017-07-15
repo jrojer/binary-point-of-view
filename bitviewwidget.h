@@ -55,10 +55,14 @@ public:
 
 public slots:
 	void setPeriod(int value);
-	void SetGrainSize(int value);
+	void ZoomIn();
+	void ZoomOut();
 
 private slots:
-	void ScrollBarValueChangedSlot(int dummy);
+	void ScrollBarValueChangedSlot(int dummy); // just to call update()
+
+signals:
+	void ZoomChanged(double val);
 
 protected:
 	void paintEvent(QPaintEvent* event) override;
@@ -83,7 +87,9 @@ private:
 	size_t num_rows_in_data_;
 	size_t num_cols_in_data_;
 
-	const int default_grain_size;
+	double scale_factor_;
+
+	const int default_grain_size_;
 };
 
 

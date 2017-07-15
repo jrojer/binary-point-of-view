@@ -15,10 +15,11 @@ class BitViewer : public QMainWindow
 public:
 	BitViewer();
 
+public slots:
+	void ZoomChanged(double);
+
 private slots:
 	void on_pushButton_open_file_clicked();
-	void on_pushButton_plus_clicked();
-	void on_pushButton_minus_clicked();
 
 protected:
 	void dropEvent(QDropEvent* event) override;
@@ -26,7 +27,6 @@ protected:
 
 private:
 	void ProcessFile(const QString& filename);
-	double scale_;
 	Ui::BitViewerMainWindow ui;
 };
 

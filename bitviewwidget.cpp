@@ -2,8 +2,9 @@
 
 BitViewWidget::BitViewWidget(QWidget* parent):
 												QWidget(parent),
-												default_grain_size(10),
+												default_grain_size_(10),
 												grain_size_pixels_(10),
+												scale_factor_(1),
 												period_bits_(8)
 {
 }
@@ -78,7 +79,7 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 		}
 
 		// draw grid except for the last row
-		if ( grain_size_pixels_ >= default_grain_size )
+		if ( grain_size_pixels_ >= default_grain_size_ )
 		{
 			for (size_t i = 0; i < num_rows-1; ++i) // all rows except the last one
 			{
@@ -103,7 +104,7 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 				// one
 				painter.fillRect(j,i,1,1,Qt::green);
 				// grid
-				if ( grain_size_pixels_ >= default_grain_size )
+				if ( grain_size_pixels_ >= default_grain_size_ )
 				{
 					painter.drawRect(j,i,1,1);
 				}
@@ -113,7 +114,7 @@ void BitViewWidget::paintEvent(QPaintEvent* event)
 				// zero
 				painter.fillRect(j,i,1,1,Qt::black);
 				// grid
-				if ( grain_size_pixels_ >= default_grain_size )
+				if ( grain_size_pixels_ >= default_grain_size_ )
 				{
 					painter.drawRect(j,i,1,1);
 				}
@@ -132,14 +133,6 @@ void BitViewWidget::setPeriod(int value)
 	}
 	period_bits_ = value;
 	update();
-}
-void BitViewWidget::SetGrainSize(int value)
-{
-	if (value != 0)
-	{
-		grain_size_pixels_ = value;
-		update();
-	}
 }
 
 void BitViewWidget::CaptureScrollBars(QScrollBar* vertical, QScrollBar* horizontal)
@@ -200,7 +193,38 @@ void BitViewWidget::wheelEvent(QWheelEvent* event)
 	event->accept();
 }
 
-void BitViewWidget::ScrollBarValueChangedSlot(int dummy)
+void BitViewWidget::ScrollBarValueChangedSlot(int dummy) // just to call update()
 {
 	update();
+}
+
+void BitViewWidget::ZoomIn()
+{
+	if (scale_factor_ * 1.25 <= 4)
+	{
+		scale_factor_ *= 1.25;
+
+		int value = (int)(scale_factor_*10);
+
+		grain_size_pixels_ = value;
+		update();
+	}
+	emit ZoomChanged(scale_factor_);
+}
+
+void BitViewWidget::ZoomOut()
+{
+	if (scale_factor_ * 0.8 >= 0.1)
+	{
+		scale_factor_ *= 0.8;
+
+		int value = (int)(scale_factor_*10);
+
+		if (value != 0)
+		{
+			grain_size_pixels_ = value;
+			update();
+		}
+	}
+	emit ZoomChanged(scale_factor_);
 }
