@@ -8,6 +8,7 @@
 #include "QPixmap"
 #include "QPainter"
 #include "QMimeData"
+#include "QStringList"
 
 class BitViewer : public QMainWindow
 {
@@ -21,6 +22,7 @@ public slots:
 
 private slots:
 	void on_pushButton_open_file_clicked();
+	void on_pushButton_save_file_clicked();
 
 protected:
 	void dropEvent(QDropEvent* event) override;

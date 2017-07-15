@@ -12,13 +12,20 @@ BitViewWidget::BitViewWidget(QWidget* parent):
 	setMouseTracking(true);
 }
 
-
 void BitViewWidget::ReadFile(QFile* file)
 {
 	data_.resize(file->size());
 	QDataStream data_stream(file);
 	data_stream.readRawData((char*)data_.data(), file->size());
 	update();
+}
+void BitViewWidget::WriteFile(QFile* file)
+{
+	QDataStream data_stream(file);
+
+	// TODO Add number of bytes written check
+
+	data_stream.writeRawData((char*)data_.data(), data_.size());
 }
 
 int GetBit(const uint8_t* mass, size_t bitpos)

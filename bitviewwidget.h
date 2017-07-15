@@ -51,6 +51,7 @@ public:
 	BitViewWidget(QWidget* parent);
 
 	void ReadFile(QFile* file);
+	void WriteFile(QFile* file);
 	void CaptureScrollBars(QScrollBar* vertical, QScrollBar* horizontal);
 
 public slots:

@@ -52,6 +52,32 @@ void BitViewer::ProcessFile(const QString& filename)
 		this->setWindowTitle("Bit Viewer - " + filename);
 	}
 }
+void BitViewer::on_pushButton_save_file_clicked()
+{
+	QFileDialog dialog(this);
+	dialog.setFileMode(QFileDialog::AnyFile);
+	dialog.setAcceptMode(QFileDialog::AcceptSave);
+	dialog.setDefaultSuffix(".bin");
+	dialog.setViewMode(QFileDialog::Detail);
+
+	QStringList filenames;
+	if (dialog.exec())
+	{
+	    filenames = dialog.selectedFiles();
+	}
+
+	if (!filenames.empty())
+	{
+		QFile file(filenames[0]);
+		if ( file.open(QIODevice::WriteOnly))
+		{
+			ui.bitview_widget->WriteFile(&file);
+
+			file.close();
+			this->setWindowTitle("Bit Viewer - " + filenames[0]);
+		}
+	}
+}
 
 void BitViewer::dropEvent(QDropEvent* event)
 {
